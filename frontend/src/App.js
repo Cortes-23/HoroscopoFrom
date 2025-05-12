@@ -3,23 +3,25 @@ import './App.css';
 
 function App() {
   const [signo, setSigno] = useState('');
-  const [mensaje, setMensaje] = useState('');
+  const [prediccion, setPrediccion] = useState('');
 
-  const obtenerHoroscopo = () => {
-    setMensaje(`Predicción para ${signo}: ¡Grandes cambios están por venir!`);
+  const consultarHoroscopo = () => {
+    setPrediccion(`Tu horóscopo para ${signo}: Hoy es un gran día para nuevos comienzos.`);
   };
 
   return (
     <div className="container">
       <h1>Horóscopo Diario</h1>
-      <input
-        type="text"
-        value={signo}
-        onChange={(e) => setSigno(e.target.value)}
-        placeholder="Ingresa tu signo zodiacal"
-      />
-      <button onClick={obtenerHoroscopo}>Consultar</button>
-      {mensaje && <div className="mensaje">{mensaje}</div>}
+      <div className="input-section">
+        <input
+          type="text"
+          value={signo}
+          onChange={(e) => setSigno(e.target.value)}
+          placeholder="Ingresa tu signo zodiacal"
+        />
+        <button onClick={consultarHoroscopo}>Consultar</button>
+      </div>
+      {prediccion && <div className="mensaje">{prediccion}</div>}
     </div>
   );
 }
