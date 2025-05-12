@@ -1,30 +1,57 @@
 import React, { useState } from 'react';
 import './App.css';
-import { predicciones, getSignoByDate } from './data/horoscope';
+import HoroscopeResult from './components/HoroscopeResult';
+import { signosData, validarFecha, obtenerSigno } from './data/predicciones';
 
 function App() {
   const [fecha, setFecha] = useState('');
-  const [prediccion, setPrediccion] = useState('');
+  const [resultado, setResultado] = useState(null);
+  const [consultaHabilitada, setConsultaHabilitada] = useState(true);
+
+  const handleFechaChange = (e) => {
+    const value = e.target.value;
+    const formattedDate = value.split('-').reverse().join('-');
+    setFecha(formattedDate);
+  };
 
   const consultarHoroscopo = () => {
-    const signo = getSignoByDate(fecha);
-    const prediccionesSigno = predicciones[signo] || [];
-    const prediccionRandom = prediccionesSigno[Math.floor(Math.random() * prediccionesSigno.length)];
-    setPrediccion(`${signo.toUpperCase()}: ${prediccionRandom}`);
+    if (!validarFecha(fecha)) return;
+    
+    setConsultaHabilitada(false);
+    const signo = obtenerSigno(fecha);
+    const { emoji, predicciones } = signosData[signo];
+    const prediccionAleatoria = predicciones[Math.floor(Math.random() * predicciones.length)];
+    
+    setResultado({ signo, prediccion: prediccionAleatoria, emoji });
+  };
+
+  const handleTimeout = () => {
+    setResultado(null);
+    setConsultaHabilitada(true);
   };
 
   return (
     <div className="container">
-      <h1>Horóscopo Diario</h1>
+      <h1>Tu Horóscopo Personal</h1>
       <div className="input-section">
         <input
           type="date"
-          value={fecha}
-          onChange={(e) => setFecha(e.target.value)}
+          onChange={handleFechaChange}
+          required
         />
-        <button onClick={consultarHoroscopo}>Consultar</button>
+        <button 
+          onClick={consultarHoroscopo}
+          disabled={!consultaHabilitada || !fecha}
+        >
+          Consultar
+        </button>
       </div>
-      {prediccion && <div className="mensaje">{prediccion}</div>}
+      {resultado && (
+        <HoroscopeResult
+          {...resultado}
+          onTimeout={handleTimeout}
+        />
+      )}
     </div>
   );
 }
