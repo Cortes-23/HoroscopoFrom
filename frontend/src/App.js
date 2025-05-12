@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import './App.css';
+import { predicciones, getSignoByDate } from './data/horoscope';
 
 function App() {
-  const [signo, setSigno] = useState('');
+  const [fecha, setFecha] = useState('');
   const [prediccion, setPrediccion] = useState('');
 
   const consultarHoroscopo = () => {
-    setPrediccion(`Tu horóscopo para ${signo}: Hoy es un gran día para nuevos comienzos.`);
+    const signo = getSignoByDate(fecha);
+    const prediccionesSigno = predicciones[signo] || [];
+    const prediccionRandom = prediccionesSigno[Math.floor(Math.random() * prediccionesSigno.length)];
+    setPrediccion(`${signo.toUpperCase()}: ${prediccionRandom}`);
   };
 
   return (
@@ -14,10 +18,9 @@ function App() {
       <h1>Horóscopo Diario</h1>
       <div className="input-section">
         <input
-          type="text"
-          value={signo}
-          onChange={(e) => setSigno(e.target.value)}
-          placeholder="Ingresa tu signo zodiacal"
+          type="date"
+          value={fecha}
+          onChange={(e) => setFecha(e.target.value)}
         />
         <button onClick={consultarHoroscopo}>Consultar</button>
       </div>
